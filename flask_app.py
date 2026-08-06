@@ -47,6 +47,9 @@ def index():
     comments = Comment.query.all()
     return render_template("index.html", comments=comments)
 
+@app.route("/portfolio/")
+def portfolio():
+    return render_template("portfolio.html")
 
 @app.route("/add", methods=["POST"])
 def add():
