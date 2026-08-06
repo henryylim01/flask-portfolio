@@ -6,17 +6,24 @@
 <body>
     <h1>Welcome to My Scratch Page</h1>
 
-    <!-- Bonus Task A goes here -->
     <p>By Henry Lim — <a href="https://www.linkedin.com/in/henry-lim-15636212b">LinkedIn</a></p>
+
+    {% if current_user.is_authenticated %}
+        <p><a href="{{ url_for('logout') }}">Log out</a></p>
+    {% else %}
+        <p><a href="{{ url_for('login') }}">Log in</a></p>
+    {% endif %}
 
     <h2>Comments</h2>
     {% for comment in comments %}
         <p>{{ comment.content }}</p>
     {% endfor %}
 
-    <form action="{{ url_for('add') }}" method="post">
-        <input name="contents" placeholder="Add a comment">
-        <input type="submit" value="Add">
-    </form>
+    {% if current_user.is_authenticated %}
+        <form action="{{ url_for('add') }}" method="post">
+            <input name="contents" placeholder="Add a comment">
+            <input type="submit" value="Add">
+        </form>
+    {% endif %}
 </body>
 </html>
