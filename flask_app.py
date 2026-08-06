@@ -18,10 +18,12 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-class User(UserMixin):
-    def __init__(self, username, password_hash):
-        self.username = username
-        self.password_hash = password_hash
+class User(UserMixin, db.Model):
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -30,16 +32,9 @@ class User(UserMixin):
         return self.username
 
 
-all_users = {
-    "admin": User("admin", generate_password_hash("REDACTED")),
-    "bob": User("bob", generate_password_hash("REDACTED")),
-    "caroline": User("caroline", generate_password_hash("REDACTED")),
-}
-
-
 @login_manager.user_loader
 def load_user(user_id):
-    return all_users.get(user_id)
+    return User.query.filter_by(username=user_id).first()
 
 
 class Comment(db.Model):
@@ -72,11 +67,9 @@ def login():
         return render_template("login_page.html", error=False)
 
     username = request.form["username"]
-    if username not in all_users:
-        return render_template("login_page.html", error=True)
-    user = all_users[username]
+    user = User.query.filter_by(username=username).first()
 
-    if not user.check_password(request.form["password"]):
+    if user is None or not user.check_password(request.form["password"]):
         return render_template("login_page.html", error=True)
 
     login_user(user)
