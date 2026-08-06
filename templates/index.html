@@ -1,30 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
     <title>My Scratch Page</title>
 </head>
 <body>
-    <h1>Welcome to My Scratch Page</h1>
+    <nav class="navbar navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{{ url_for('index') }}">My Scratch Page</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{{ url_for('portfolio') }}">Portfolio</a></li>
+                {% if current_user.is_authenticated %}
+                    <li><a href="{{ url_for('logout') }}">Log out</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Log in</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
 
-    <p>By Henry Lim — <a href="https://www.linkedin.com/in/henry-lim-15636212b">LinkedIn</a></p>
-    <p><a href="{{ url_for('portfolio') }}">View my Portfolio →</a></p>
+    <div class="container">
+        <div class="row">
+            <p class="lead">By Henry Lim — <a href="https://www.linkedin.com/in/henry-lim-15636212b">LinkedIn</a></p>
+        </div>
 
-    {% if current_user.is_authenticated %}
-        <p><a href="{{ url_for('logout') }}">Log out</a></p>
-    {% else %}
-        <p><a href="{{ url_for('login') }}">Log in</a></p>
-    {% endif %}
+        <div class="row">
+            <h2>Comments</h2>
+            {% for comment in comments %}
+                <div class="panel panel-default">
+                    <div class="panel-body">{{ comment.content }}</div>
+                </div>
+            {% endfor %}
+        </div>
 
-    <h2>Comments</h2>
-    {% for comment in comments %}
-        <p>{{ comment.content }}</p>
-    {% endfor %}
-
-    {% if current_user.is_authenticated %}
-        <form action="{{ url_for('add') }}" method="post">
-            <input name="contents" placeholder="Add a comment">
-            <input type="submit" value="Add">
-        </form>
-    {% endif %}
+        {% if current_user.is_authenticated %}
+            <div class="row" style="margin-top: 20px;">
+                <form action="{{ url_for('add') }}" method="post">
+                    <div class="form-group">
+                        <textarea name="contents" placeholder="Add a comment" class="form-control"></textarea>
+                    </div>
+                    <input type="submit" class="btn btn-success" value="Add">
+                </form>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>

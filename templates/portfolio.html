@@ -1,19 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" integrity="sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ==" crossorigin="anonymous">
+
     <title>Henry Lim — Portfolio</title>
 </head>
 <body>
-    <p><a href="{{ url_for('index') }}">← Back to Scratch Page</a></p>
+    <nav class="navbar navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{{ url_for('portfolio') }}">Henry Lim — Portfolio</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="{{ url_for('index') }}">Scratch Page</a></li>
+            </ul>
+        </div>
+    </nav>
 
-    <h1>Henry Lim</h1>
-    <p>Cloud Support & DevOps trainee — Generation Singapore Bootcamp.</p>
-    <p><a href="https://www.linkedin.com/in/henry-lim-15636212b">LinkedIn</a></p>
+    <div class="container">
+        <div class="row">
+            <h1>Henry Lim</h1>
+            <p class="lead">Cloud Support & DevOps trainee — Generation Singapore Bootcamp</p>
+            <p><a href="https://www.linkedin.com/in/henry-lim-15636212b" class="btn btn-default">LinkedIn</a></p>
+        </div>
 
-    <h2>Projects</h2>
-    <ul>
-        <li>Mini Project A — Flask portfolio + comments app, built with Python, Flask, and SQLite, deployed on PythonAnywhere</li>
-        <li>Mini Project B — Added user login/logout, server-side security enforcement, and a database-backed user system</li>
-    </ul>
+        <div class="row" style="margin-top: 30px;">
+            <h2>Projects</h2>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <strong>Mini Project A</strong> — Flask portfolio + comments app, built with Python, Flask, and SQLite, deployed on PythonAnywhere
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <strong>Mini Project B</strong> — Added user login/logout, server-side security enforcement, and a database-backed user system
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
