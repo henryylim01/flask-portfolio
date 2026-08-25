@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import login_required, login_user, LoginManager, logout_user, UserMixin, current_user
+from flask_wtf import CSRFProtect
 from werkzeug.security import check_password_hash, generate_password_hash
 import os
 
@@ -13,7 +14,12 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
-app.secret_key = "REDACTED"
+# Secret key MUST come from the environment - never hardcode this.
+# Generate one with: python3 -c "import secrets; print(secrets.token_hex(32))"
+app.secret_key = os.environ["FLASK_SECRET_KEY"]
+
+csrf = CSRFProtect(app)
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -87,4 +93,5 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    debug_mode = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    app.run(host="0.0.0.0", port=5000, debug=debug_mode)
