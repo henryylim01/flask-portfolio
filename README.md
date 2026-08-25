@@ -48,7 +48,7 @@ Built as Mini Project A and B for the Cloud Support & DevOps Bootcamp at Generat
 - Integrated **Flask-Login** to manage user sessions:
   - A `User` class (`UserMixin`) representing a logged-in user
   - A `login_manager.user_loader` function so Flask-Login can look up a user from their session
-  - `app.secret_key` set to a random string, used internally to sign session cookies
+  - `app.secret_key` used internally to sign session cookies (loaded from the `FLASK_SECRET_KEY` environment variable — see **Security** below)
 - Added `/logout/`, protected with `@login_required`
 
 ### Task B — Real, server-side security
@@ -72,17 +72,38 @@ This blocks the request at the server regardless of what the frontend does or do
 Originally, users were hardcoded in a Python dictionary (`all_users = {...}`) directly in `flask_app.py` — functional, but not realistic or extensible. This was replaced with:
 - A `User` **database model** (`db.Model` + `UserMixin`), storing `username` and a hashed `password_hash`
 - `load_user()` and the `login()` view updated to query the database instead of the dictionary
-- A seed script (`create_users.py`) to create the `users` table and populate initial accounts, including the `tester` / `REDACTED` account
+- A seed script (`create_users.py`) to create the `users` table and populate initial accounts, including a `tester` account
 
 Verified directly via the SQLite CLI:
 ```bash
 sqlite3 comments.db
 SELECT * FROM users;
 ```
-— confirming passwords are stored as hashes, never in plaintext.
+— confirming passwords are stored as hashes, never in plaintext. (`create_users.py` originally seeded fixed accounts with hardcoded passwords; it's since been rewritten to prompt for each username/password interactively so no plaintext credentials live in the source — see **Security** below.)
 
 ### Bonus Task A — Separate Portfolio/Introduction page
 Added `/portfolio/` and `portfolio.html`, a standalone introduction page distinct from the comments Scratch Page, with a name, short bio, LinkedIn link, and a project summary. Linked both ways so visitors can move between the Scratch Page and the Portfolio page.
+
+---
+
+## Getting started
+
+```bash
+git clone https://github.com/henryylim01/flask-portfolio.git
+cd flask-portfolio
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+cp .env.example .env        # reference for which vars you need; edit as a reminder
+export FLASK_SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+# ^ the app reads this at runtime — set it in every new terminal session
+
+python3 create_db.py         # creates comments.db
+python3 create_users.py      # prompts you to add login accounts
+
+python3 flask_app.py         # runs on http://localhost:5000
+```
 
 ---
 
@@ -92,14 +113,17 @@ Added `/portfolio/` and `portfolio.html`, a standalone introduction page distinc
 flask-portfolio/
 ├── flask_app.py          # Flask routes, database models, auth logic
 ├── create_db.py           # One-off script to create the comments table
-├── create_users.py         # One-off script to create the users table + seed accounts
-├── comments.db              # SQLite database file (generated, not hand-written)
+├── create_users.py         # Interactive script to create the users table + accounts
+├── .env.example              # Template for required environment variables
 ├── requirements.txt          # Python dependencies
 ├── templates/
 │   ├── index.html              # Scratch Page (comments)
 │   ├── login_page.html          # Login form
 │   └── portfolio.html            # Introduction/Portfolio page
 └── .gitignore
+
+Note: comments.db is generated locally (via create_db.py / create_users.py)
+and is gitignored — it's never committed to the repo.
 ```
 
 ---
@@ -121,9 +145,22 @@ flask-portfolio/
 
 ---
 
+## Security
+
+This repo went through a security review and cleanup after the original bootcamp submission. Fixes applied:
+
+- **Secret key** — no longer hardcoded in source; loaded from the `FLASK_SECRET_KEY` environment variable at startup (the app now fails fast if it's not set, instead of silently using a weak default). Copy `.env.example` to `.env` and fill in a real value generated with `python3 -c "import secrets; print(secrets.token_hex(32))"`.
+- **Debug mode** — off by default; only enabled if `FLASK_DEBUG=true` is explicitly set.
+- **CSRF protection** — added via Flask-WTF to both the login and comment forms.
+- **No committed database or credentials** — `comments.db` and `__pycache__` are gitignored and generated locally instead of checked in. `create_users.py` now prompts for usernames/passwords interactively rather than storing them as plaintext in source.
+- **Git history rewritten** — the repo's commit history was rewritten with `git-filter-repo` to permanently remove an old hardcoded secret key and plaintext seed passwords that had been committed early in the project.
+
+If you're setting this up fresh, see **Getting started** below.
+
+---
+
 ## Possible next steps
 
 - Style the portfolio page to match the Bootstrap look of the login page
 - Store timestamps and the posting user's name on each comment (linking `Comment` to `User`)
-- Move `app.secret_key` and other config into environment variables rather than hardcoding in source
 - Add basic input validation/error handling around login attempts (e.g. rate limiting)
