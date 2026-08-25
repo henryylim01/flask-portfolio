@@ -2,8 +2,8 @@
 
 A small portfolio website built with **Python, Flask, and SQLite**, hosted live on **PythonAnywhere**.
 
-🔗 **Live site:** https://henryyylim01.pythonanywhere.com
-🔗 **Portfolio page:** https://henryyylim01.pythonanywhere.com/portfolio/
+🔗 **Live site:** https://henryylim01.pythonanywhere.com
+🔗 **Portfolio page:** https://henryylim01.pythonanywhere.com/portfolio/
 
 Built as Mini Project A and B for the Cloud Support & DevOps Bootcamp at Generation Singapore, to practice Flask fundamentals, database-backed apps, authentication, and using Git as source control.
 
