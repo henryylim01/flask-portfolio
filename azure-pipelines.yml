@@ -6,14 +6,13 @@
 trigger:
 - main
 
-pool:
-  vmImage: ubuntu-latest
+pool: my-laptop-pool
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- script: |
+    docker build -t henryylim01/flask-app:$(Build.BuildNumber) .
+  displayName: 'Build Docker image'
 
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    docker push henryylim01/flask-app:$(Build.BuildNumber)
+  displayName: 'Push Docker image'
