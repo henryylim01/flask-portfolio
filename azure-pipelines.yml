@@ -16,3 +16,11 @@ steps:
 - script: |
     docker push henryylim01/flask-app:$(Build.BuildNumber)
   displayName: 'Push Docker image'
+
+- script: |
+    kubectl set image deployment/flask-app-deployment flask-app=henryylim01/flask-app:$(Build.BuildNumber) -n default
+  displayName: 'Deploy to Kubernetes'
+
+- script: |
+    rm -rf $(Agent.BuildDirectory)/*
+  displayName: 'Cleanup workspace'
