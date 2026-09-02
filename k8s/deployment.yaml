@@ -1,0 +1,38 @@
+# deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-app
+  template:
+    metadata:
+      labels:
+        app: flask-app
+    spec:
+      imagePullSecrets:
+        - name: flask-app-registry-secret
+      containers:
+        - name: flask-app
+          image: henryylim01/flask-app:20260829.5
+          ports:
+            - containerPort: 5000
+          env:
+            - name: FLASK_DEBUG
+              value: "false"
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flask-app-secret
+                  key: FLASK_SECRET_KEY
+          volumeMounts:
+            - name: db-storage
+              mountPath: /app/comments.db
+              subPath: comments.db
+      volumes:
+        - name: db-storage
+          persistentVolumeClaim:
+            claimName: flask-app-pvc
